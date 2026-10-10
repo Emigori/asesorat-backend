@@ -1,0 +1,67 @@
+### Colección de pruebas manuales (extensión REST Client de VS Code)
+@base = http://localhost:3000
+@adminToken = pega-aqui-el-token
+@studentToken = pega-aqui-el-token
+@tutorToken = pega-aqui-el-token
+
+GET {{base}}/api/health
+
+### Registro de estudiante
+POST {{base}}/api/auth/register
+Content-Type: application/json
+
+{ "name": "Ana López", "email": "ana.lopez@iteso.mx", "password": "Secreta123", "role": "student" }
+
+### Registro de asesor
+POST {{base}}/api/auth/register
+Content-Type: application/json
+
+{ "name": "Carlos Ruiz", "email": "carlos.ruiz@iteso.mx", "password": "Secreta123", "role": "tutor" }
+
+### Login
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@asesorat.mx", "password": "UnaClaveSegura123" }
+
+### Perfil
+GET {{base}}/api/auth/me
+Authorization: Bearer {{studentToken}}
+
+### Crear materia (admin)
+POST {{base}}/api/subjects
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{ "code": "DSW3010", "name": "Desarrollo Backend", "department": "DESI" }
+
+### Listar materias
+GET {{base}}/api/subjects
+
+### Perfil del asesor
+PUT {{base}}/api/tutors/me/profile
+Authorization: Bearer {{tutorToken}}
+Content-Type: application/json
+
+{ "bio": "Asesor de backend", "subjects": ["<subjectId>"], "availability": [{ "dayOfWeek": 1, "from": "09:00", "to": "13:00" }] }
+
+### Asesores por materia
+GET {{base}}/api/tutors?subject=<subjectId>
+
+### Reservar asesoría
+POST {{base}}/api/sessions
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{ "tutorId": "<tutorId>", "subjectId": "<subjectId>", "startsAt": "2026-10-12T10:00:00-06:00", "durationMin": 60, "topic": "JWT" }
+
+### Mis asesorías
+GET {{base}}/api/sessions/me
+Authorization: Bearer {{studentToken}}
+
+### Confirmar asesoría (asesor)
+PATCH {{base}}/api/sessions/<sessionId>/status
+Authorization: Bearer {{tutorToken}}
+Content-Type: application/json
+
+{ "status": "confirmed" }
